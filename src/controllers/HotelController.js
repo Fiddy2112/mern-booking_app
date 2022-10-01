@@ -1,4 +1,5 @@
 const Hotel = require("../models/hotel");
+const createError = require("../utils/error");
 
 class HotelController {
   /** CREATE
@@ -15,11 +16,11 @@ class HotelController {
         saveHotel,
       });
     } catch (err) {
-      console.error(error);
+      console.error(err);
       res.status(500).json({
         success: false,
         message: "Internal server error",
-        error,
+        err,
       });
     }
   }
@@ -38,11 +39,11 @@ class HotelController {
         hotel,
       });
     } catch (err) {
-      console.error(error);
+      console.error(err);
       res.status(500).json({
         success: false,
         message: "Internal server error",
-        error,
+        err,
       });
     }
   }
@@ -60,15 +61,15 @@ class HotelController {
       const hotels = await Hotel.find(options);
       res.status(200).json({
         success: true,
-        message: "Successfully new hotel!",
+        message: "Successfully all hotel!",
         hotels,
       });
     } catch (err) {
-      console.error(error);
+      console.error(err);
       res.status(500).json({
         success: false,
         message: "Internal server error",
-        error,
+        err,
       });
     }
   }
@@ -93,11 +94,11 @@ class HotelController {
         updatedHotel,
       });
     } catch (err) {
-      console.error(error);
+      console.error(err);
       res.status(500).json({
         success: false,
         message: "Internal server error",
-        error,
+        err,
       });
     }
   }
@@ -115,11 +116,11 @@ class HotelController {
         message: "Deleted hotel successfully!",
       });
     } catch (err) {
-      console.error(error);
+      console.error(err);
       res.status(500).json({
         success: false,
         message: "Internal server error",
-        error,
+        err,
       });
     }
   }
