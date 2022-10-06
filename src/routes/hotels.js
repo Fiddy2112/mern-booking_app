@@ -8,5 +8,7 @@ router.put("/updateHotel/:id", verifyAdmin, HotelController.updateHotel);
 router.delete("/deleteHotel/:id", verifyAdmin, HotelController.deleteHotel);
 router.get("/getHotel/:id", HotelController.getHotel);
 router.get("/getAllHotel", HotelController.getAllHotel);
+router.get("/countByType", HotelController.countByType);
+router.get("/countByCity", HotelController.countByCity);
 
 module.exports = router;

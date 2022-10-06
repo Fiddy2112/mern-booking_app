@@ -53,12 +53,17 @@ class HotelController {
    * @desc Hotel registration
    */
   async getAllHotel(req, res) {
-    const options = {
-      //The $set operator replaces the value of a field with the specified value.
-      $set: req.body,
-    };
+    //The $set operator replaces the value of a field with the specified value.
+    // const options = {
+    //   $set: req.body,
+    // };
+
+    const { min, max, ...other } = req.query;
     try {
-      const hotels = await Hotel.find(options);
+      const hotels = await Hotel.find({
+        ...other,
+        cheapestPrice: { $gt: min | 1, $lt: max || 999 },
+      }).limit(req.query.limit);
       res.status(200).json({
         success: true,
         message: "Successfully all hotel!",
@@ -114,6 +119,65 @@ class HotelController {
       res.status(200).json({
         success: true,
         message: "Deleted hotel successfully!",
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({
+        success: false,
+        message: "Internal server error",
+        err,
+      });
+    }
+  }
+
+  /** POST
+   * @route POST api/hotels/countByCity
+   * @desc count by city
+   */
+  async countByCity(req, res) {
+    const cities = req.query.cities.split(",");
+    try {
+      const listCity = await Promise.all(
+        cities.map((city) => {
+          return Hotel.countDocuments({
+            city: city,
+          });
+        })
+      );
+      res.status(200).json({
+        success: true,
+        message: " cities successfully!",
+        listCity,
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({
+        success: false,
+        message: "Internal server error",
+        err,
+      });
+    }
+  }
+
+  /** POST
+   * @route POST api/hotels/countByType
+   * @desc count by type
+   */
+  async countByType(req, res) {
+    try {
+      const hotelCount = await Hotel.countDocuments({ type: "hotel" });
+      const apartmentCount = await Hotel.countDocuments({ type: "apartment" });
+      const resortCount = await Hotel.countDocuments({ type: "resort" });
+      const villaCount = await Hotel.countDocuments({ type: "villa" });
+
+      res.status(200).json({
+        success: true,
+        data: [
+          { type: "hotel", count: hotelCount },
+          { type: "apartment", count: apartmentCount },
+          { type: "resort", count: resortCount },
+          { type: "villa", count: villaCount },
+        ],
       });
     } catch (err) {
       console.error(err);
