@@ -116,6 +116,36 @@ class RoomController {
     }
   }
 
+  /** Put
+   * @route POST api/rooms/selectRoom/:id
+   * @desc select room
+   */
+
+  async selectRoom(req, res) {
+    try {
+      const updateSelectRoom = await Room.updateOne(
+        { "roomNumbers._id": req.params.id },
+        {
+          $push: {
+            "roomNumbers.$.unavailableDates": req.body.dates,
+          },
+        }
+      );
+      res.status(200).json({
+        success: true,
+        message: "Successfully updated select room!",
+        updateSelectRoom,
+      });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({
+        success: false,
+        message: "Internal server error",
+        err,
+      });
+    }
+  }
+
   /** Delete
    * @route POST api/rooms/deleteRoom/:id
    * @desc Room registration

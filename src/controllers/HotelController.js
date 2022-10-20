@@ -1,4 +1,5 @@
 const Hotel = require("../models/hotel");
+const Room = require("../models/room");
 const createError = require("../utils/error");
 
 class HotelController {
@@ -49,7 +50,7 @@ class HotelController {
   }
 
   /** Read
-   * @route POST api/hotels/getAllHotel
+   * @route POST api/hotels/getAllHotel?query_params
    * @desc Hotel registration
    */
   async getAllHotel(req, res) {
@@ -147,7 +148,7 @@ class HotelController {
       res.status(200).json({
         success: true,
         message: " cities successfully!",
-        listCity,
+        data: listCity,
       });
     } catch (err) {
       console.error(err);
@@ -186,6 +187,26 @@ class HotelController {
         message: "Internal server error",
         err,
       });
+    }
+  }
+
+  async hotelRooms(req, res, next) {
+    const hotelId = { _id: req.params.id };
+    try {
+      const hotel = await Hotel.findById(hotelId);
+      const listRoom = await Promise.all(
+        hotel.rooms.map((room) => {
+          return Room.findById(room);
+        })
+      );
+
+      res.status(200).json({
+        success: true,
+        message: "Successfully room in hotel!",
+        listRoom,
+      });
+    } catch (err) {
+      next(err);
     }
   }
 }
